@@ -1,0 +1,20 @@
+[
+    {
+        "EventID": 123,
+        "SourceName": "Security",
+        "TimeGenerated": "2022-01-01 12:00:00",
+        "StringInserts": ["username1", "computer1"]
+    },
+    {
+        "EventID": 456,
+        "SourceName": "System",
+        "TimeGenerated": "2022-01-01 12:01:00",
+        "StringInserts": ["username2", "computer2"]
+    },
+    {
+        "EventID": 789,
+        "SourceName": "Security",
+        "TimeGenerated": "2022-01-01 12:02:00",
+        "StringInserts": ["username3", "computer3"]
+    }
+]

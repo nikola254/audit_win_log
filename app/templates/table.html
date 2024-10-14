@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Таблица</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        {{ form.submit(value="Показать таблицу") }}
+      </form>
+      
+      {% if data %}
+      <table>
+        <tr>
+          <th>Event ID</th>
+          <th>Source Name</th>
+          <th>Time Generated</th>
+          <th>String Inserts</th>
+        </tr>
+        {% for item in data %}
+        <tr>
+            <td>{{ item.event_id }}</td>
+            <td>{{ item.event_type }}</td>
+            <td>{{ item.event_time }}</td>
+            <td>{{ item.username }} ({{ item.computer }})</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% endif %}
+
+{% endblock %}
