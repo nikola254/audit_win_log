@@ -1,20 +1,20 @@
 [
-    {
-        "EventID": 123,
+    {   
+        "EventID": 165432,
         "SourceName": "Security",
-        "TimeGenerated": "2022-01-01 12:00:00",
-        "StringInserts": ["username1", "computer1"]
+        "TimeGenerated": "22.10.2024 14:38:44",
+        "StringInserts": ["Info", "Username"]
     },
     {
-        "EventID": 456,
-        "SourceName": "System",
-        "TimeGenerated": "2022-01-01 12:01:00",
-        "StringInserts": ["username2", "computer2"]
+        "EventID": 8198,
+        "SourceName": "Security",
+        "TimeGenerated": "22.10.2024 14:38:14",
+        "StringInserts": ["Info", "Username"]
     },
     {
-        "EventID": 789,
+        "EventID": 1003,
         "SourceName": "Security",
-        "TimeGenerated": "2022-01-01 12:02:00",
-        "StringInserts": ["username3", "computer3"]
+        "TimeGenerated": "22.10.2024 14:38:12",
+        "StringInserts": ["Info", "Username"]
     }
 ]

@@ -46,8 +46,9 @@ class Post(db.Model):
     def __repr__(self):
         return '<Post {}>'.format(self.body)
     
-class Audit(db.Model):
-    event_id: so.Mapped[int] = so.mapped_column(primary_key=True)
+class Audit_new(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    event_id: so.Mapped[int] = so.mapped_column()
     event_type: so.Mapped[str] = so.mapped_column(sa.String(256)) 
     event_time: so.Mapped[datetime] = so.mapped_column()
     username: so.Mapped[str] = so.mapped_column(sa.String(256))

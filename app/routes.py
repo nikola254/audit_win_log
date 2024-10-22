@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for
 from app import app
-from app.forms import LoginForm, TableForm
+from app.forms import LoginForm, TableForm, RegistrationForm
 from app.script import handle_form_submission
 
 
@@ -37,3 +37,9 @@ def table():
     if form.validate_on_submit():
         data = handle_form_submission(file_path='app/audit.json')
     return render_template('table.html', title='Показать таблицу', form=form, data=data)
+
+@app.route('/register')
+def register():
+    form = RegistrationForm()
+    
+    return render_template('register.html', title='Sign In', form=form)
