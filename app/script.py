@@ -1,6 +1,6 @@
-import win32evtlog
+# import win32evtlog
 import psycopg2
-import pywintypes
+# import pywintypes
 import json
 
 # Establish a connection to the PostgreSQL database
@@ -32,22 +32,22 @@ def parse_audit_log_from_file(file_path):
         })
     return events
 
-def parse_audit_log_from_windows_audit_log():
-    flags = win32evtlog.EVENTLOG_BACKWARDS_READ | win32evtlog.EVENTLOG_SEQUENTIAL_READ
-    events = []
-    handle = None
-    try:
-        handle = win32evtlog.OpenEventLog("Security", "localhost")
-        events = win32evtlog.ReadEventLog(handle, flags, 0)
-    except pywintypes.error as e:
-        print(f"Ошибка: {e}")
-    finally:
-        if handle is not None and handle != win32evtlog.INVALID_HANDLE_VALUE:
-            try:
-                win32evtlog.CloseEventLog(handle)
-            except pywintypes.error as e:
-                print(f"Ошибка при закрытии журнала событий: {e}")
-    return events
+# def parse_audit_log_from_windows_audit_log():
+#     flags = win32evtlog.EVENTLOG_BACKWARDS_READ | win32evtlog.EVENTLOG_SEQUENTIAL_READ
+#     events = []
+#     handle = None
+#     try:
+#         handle = win32evtlog.OpenEventLog("Security", "localhost")
+#         events = win32evtlog.ReadEventLog(handle, flags, 0)
+#     except pywintypes.error as e:
+#         print(f"Ошибка: {e}")
+#     finally:
+#         if handle is not None and handle != win32evtlog.INVALID_HANDLE_VALUE:
+#             try:
+#                 win32evtlog.CloseEventLog(handle)
+#             except pywintypes.error as e:
+#                 print(f"Ошибка при закрытии журнала событий: {e}")
+#     return events
 
 def get_audit_log_data(events):
     for event in events:
@@ -60,8 +60,8 @@ def get_audit_log_data(events):
 def handle_form_submission(file_path=None):
     if file_path:
         events = parse_audit_log_from_file(file_path)
-    else:
-        events = parse_audit_log_from_windows_audit_log()
+    # else:
+    #     events = parse_audit_log_from_windows_audit_log()
     get_audit_log_data(events)
     return get_audit_log_data_from_db()
 
