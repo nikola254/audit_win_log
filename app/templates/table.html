@@ -3,19 +3,22 @@
 {% block content %}
     <link rel="stylesheet" href="{{ url_for('static', filename='style_table.css') }}">
     <meta charset="utf-8" />
-    <h1>Таблица</h1>
+    
+    <h1>Выбор таблицы</h1>
     <form action="" method="post">
         {{ form.hidden_tag() }}
+        {{ form.table_to_display }}
         {{ form.submit(value="Показать таблицу") }}
-      </form>
-      
-      {% if data %}
-      <table>
+    </form>
+
+    {% if form.table_to_display.data %}
+    <h2>Данные таблицы {{ form.table_to_display.data }}</h2>
+    <table>
         <tr>
-          <th>Event ID</th>
-          <th>Source Name</th>
-          <th>Time Generated</th>
-          <th>String Inserts</th>
+            <th>Event ID</th>
+            <th>Source Name</th>
+            <th>Time Generated</th>
+            <th>String Inserts</th>
         </tr>
         {% for item in data %}
         <tr>
@@ -25,7 +28,7 @@
             <td>{{ item.event_info}}</td>
         </tr>
         {% endfor %}
-      </table>
-      {% endif %}
+    </table>
+    {% endif %}
 
 {% endblock %}

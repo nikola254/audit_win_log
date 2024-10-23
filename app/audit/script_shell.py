@@ -1,6 +1,15 @@
 import subprocess
 
-def execute_powershell(command):
+def execute_powershell_criticals():
+    command = r"""
+    Get-WinEvent -FilterHashtable @{
+        Level=1 # Уровень события
+        LogName='System' # Имя журнала
+    } -MaxEvents 50 | 
+    Select-Object TimeCreated, Id, LevelDisplayName, Message |
+    Format-List TimeCreated, Id, LevelDisplayName, Message |
+    Out-File -FilePath 'C:\Users\Admin\Desktop\ro01\audit_win_log\app\audit\logs\Criticals.txt'
+    """
     try:
         result = subprocess.run(['powershell', '-Command', command], 
                                check=True, 
@@ -10,11 +19,63 @@ def execute_powershell(command):
     except subprocess.CalledProcessError as e:
         print(f"Ошибка при выполнении команды: {e}")
         print(f"Стек трассировки: {e.__traceback__}")
-
-
-
-
-# Пример использования
-# power_shell_command = "Get-Process | Select-Object Name, ID"
-# result = execute_powershell(power_shell_command)
-# print(result)
+        
+def execute_powershell_error():
+    command = r"""
+    Get-WinEvent -FilterHashtable @{
+        Level=2 # Уровень события
+        LogName='Application' # Имя журнала
+    } -MaxEvents 200 | 
+    Select-Object TimeCreated, Id, LevelDisplayName, Message |
+    Format-List TimeCreated, Id, LevelDisplayName, Message |
+    Out-File -FilePath 'C:\Users\Admin\Desktop\ro01\audit_win_log\app\audit\logs\Erors.txt'
+    """
+    try:
+        result = subprocess.run(['powershell', '-Command', command], 
+                               check=True, 
+                               text=True, 
+                               capture_output=True)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"Ошибка при выполнении команды: {e}")
+        print(f"Стек трассировки: {e.__traceback__}")
+        
+def execute_powershell_warning():
+    command = r"""
+    Get-WinEvent -FilterHashtable @{
+        Level=3 # Уровень события
+        LogName='System' # Имя журнала
+    } -MaxEvents 300 | 
+    Select-Object TimeCreated, Id, LevelDisplayName, Message |
+    Format-List TimeCreated, Id, LevelDisplayName, Message |
+    Out-File -FilePath 'C:\Users\Admin\Desktop\ro01\audit_win_log\app\audit\logs\Warnings.txt'
+    """
+    try:
+        result = subprocess.run(['powershell', '-Command', command], 
+                               check=True, 
+                               text=True, 
+                               capture_output=True)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"Ошибка при выполнении команды: {e}")
+        print(f"Стек трассировки: {e.__traceback__}")
+        
+def execute_powershell_info():
+    command = r"""
+    Get-WinEvent -FilterHashtable @{
+        Level=0 # Уровень события
+        LogName='Application' # Имя журнала
+    } -MaxEvents 500 |
+    Select-Object TimeCreated, Id, LevelDisplayName, Message |
+    Format-List TimeCreated, Id, LevelDisplayName, Message |
+    Out-File -FilePath 'C:\Users\Admin\Desktop\ro01\audit_win_log\app\audit\logs\Informations.txt'
+    """
+    try:
+        result = subprocess.run(['powershell', '-Command', command], 
+                               check=True, 
+                               text=True, 
+                               capture_output=True)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"Ошибка при выполнении команды: {e}")
+        print(f"Стек трассировки: {e.__traceback__}")

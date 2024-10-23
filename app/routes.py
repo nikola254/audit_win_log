@@ -1,7 +1,7 @@
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, current_app
 from app import app
 from app.forms import LoginForm, TableForm, RegistrationForm
-from app.script import handle_form_submission
+from app.audit.script import handle_form_submission
 
 
 @app.route('/')
@@ -33,10 +33,26 @@ def login():
 @app.route('/table', methods=['GET', 'POST'])
 def table():
     form = TableForm()
-    data = []  # Инициализируйте data как пустой список
+    data = []
+
     if form.validate_on_submit():
-        data = handle_form_submission('app/Criticals.txt')
-    return render_template('table.html', title='Показать таблицу', form=form, data=data)
+        table_name = form.table_to_display.data
+        
+        if table_name == 'Criticals':
+            data = handle_form_submission('app/audit/logs/Criticals.txt', 'criticals')
+        elif table_name == 'Error':
+            data = handle_form_submission('app/audit/logs/Errors.txt', 'error')
+        elif table_name == 'Warning':
+            data = handle_form_submission('app/audit/logs/Warnings.txt', 'warning')
+        
+        # Логирование выбранной таблицы и полученных данных
+        current_app.logger.info(f"Selected table: {table_name}")
+        current_app.logger.info(f"Received data: {data[:5]}...")  # Выводим первые 5 элементов
+        
+        return render_template('table.html', title='Показать таблицу', form=form, data=data)
+    
+    # Если форма не была отправлена или не прошла валидацию
+    return render_template('table.html', title='Показать таблицу', form=form, data=[])
 
 @app.route('/register')
 def register():

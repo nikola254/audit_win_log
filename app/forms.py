@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 import sqlalchemy as sa
 from app import db
@@ -12,6 +12,9 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Sign In')
     
 class TableForm(FlaskForm):
+    table_to_display = SelectField('Выберите таблицу для вывода', 
+                                  choices=[('Criticals', 'Criticals'), ('Error', 'Error'), ('Warning', 'Warning')],
+                                  validators=[DataRequired()])
     submit = SubmitField('Показать таблицу')
     
 class RegistrationForm(FlaskForm):

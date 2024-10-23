@@ -1,6 +1,7 @@
 import psycopg2
 import re
 import chardet
+from app.audit.script_shell import execute_powershell_criticals
 
 try:
     conn = psycopg2.connect(
@@ -88,26 +89,23 @@ def parse_audit_log(file_path):
 
 
 def get_audit_log_data(events, table):
-    sql_query = f"""
-    INSERT INTO {table} (event_time, event_id, event_type, event_info)
-    VALUES (%s, %s, %s, %s)
-    """
-    
     for event in events:
-        cursor.execute(sql_query, (
-            event['event_time'],
-            event['event_id'],
-            event['event_type'],
-            event['event_info']
-        ))
-    
+        cursor.execute(f'''
+            INSERT INTO {table} (event_time, event_id, event_type, event_info)
+            SELECT %s, %s, %s, %s
+            WHERE NOT EXISTS (
+                SELECT 1 FROM {table}
+                WHERE event_time = %s AND event_id = %s AND event_type = %s AND event_info = %s
+            )
+        ''', (event['event_time'], event['event_id'], event['event_type'], event['event_info'],
+              event['event_time'], event['event_id'], event['event_type'], event['event_info']))
     conn.commit()
-    print(f"Total of {cursor.rowcount} events processed")
-    return cursor.rowcount
 
-def handle_form_submission(file_path=None, table=None):
+
+def handle_form_submission(file_path, table):
+    execute_powershell_criticals()
     events = parse_audit_log(file_path)
-    get_audit_log_data(events)
+    get_audit_log_data(events, table)
     return get_audit_log_data_from_db(table)
 
 def get_audit_log_data_from_db(table):
