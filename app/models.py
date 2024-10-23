@@ -67,3 +67,10 @@ class Warning(db.Model):
     event_type: so.Mapped[str] = so.mapped_column(sa.String(256))
     event_info: so.Mapped[str] = so.mapped_column(sa.String(256))
     
+class All_log_file(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True) 
+    log_mode: so.Mapped[str] = so.mapped_column(sa.String(256))
+    max_size: so.Mapped[int] = so.mapped_column(sa.Integer)
+    rcord_count: so.Mapped[int] = so.mapped_column(sa.Integer)
+    log_name: so.Mapped[str] = so.mapped_column(sa.String(256))
+    

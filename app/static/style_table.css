@@ -7,7 +7,10 @@ body {
 
 h1 {
     color: #333;
-    text-align: center;
+}
+
+h2 {
+    padding-left: 20px;
 }
 
 table {
@@ -19,8 +22,13 @@ table {
 th, td {
     border: 1px solid #ddd;
     padding: 8px;
+    text-align: center;
+}
+td:last-child{
     text-align: left;
 }
+
+
 
 th {
     background-color: #f2f2f2;
@@ -35,17 +43,42 @@ tr:hover {
     background-color: #e6e6e6;
 }
 
-input {
-    max-width: 300px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    display: flex;
-    justify-content: center;
+
+#table_to_display {
+    width: 100%; /* Уменьшите ширину по необходимости */
+    padding: 8px 12px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: white;
+    cursor: pointer;
 }
 
+#table_to_display:focus {
+    outline: none;
+    border-color: #0056b3;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.2);
+}
+
+#table_to_display option {
+    padding: 8px;
+    font-size: 14px;
+}
+
+#table_to_display option:hover {
+    background-color: #f0f0f0;
+}
+
+#table_to_display option:selected {
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* Остальные стили остаются без изменений */
 input[type="submit"], input[type="button"], input[type="reset"] {
     display: inline-block;
     width: 100%;
@@ -81,7 +114,15 @@ input[type="submit"][value="Показать таблицу"]:hover {
     background-color: #0056b3;
 }
 
-.my-class {
+.centered {
     display: flex;
     justify-content: center;
+    margin-bottom: 10px; /* Отступ между строками */
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
 }

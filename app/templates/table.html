@@ -5,12 +5,17 @@
     <meta charset="utf-8" />
     
     <h1>Выбор таблицы</h1>
+
     <form action="" method="post">
         {{ form.hidden_tag() }}
-        {{ form.table_to_display }}
-        {{ form.submit(value="Показать таблицу") }}
+        <div class="centered">
+            <div>{{ form.out_all_log() }}</div> <!-- Первая кнопка по центру -->
+        </div>
+        <div class="row">
+            <div>{{ form.table_to_display() }}</div> <!-- Выпадающий список -->
+            <div>{{ form.submit() }}</div> <!-- Вторая кнопка -->
+        </div>
     </form>
-
     {% if form.table_to_display.data %}
     <h2>Данные таблицы {{ form.table_to_display.data }}</h2>
     <table>

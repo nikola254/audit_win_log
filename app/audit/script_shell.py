@@ -79,3 +79,17 @@ def execute_powershell_info():
     except subprocess.CalledProcessError as e:
         print(f"Ошибка при выполнении команды: {e}")
         print(f"Стек трассировки: {e.__traceback__}")
+        
+def execute_powershell_all_log():
+    command = r"""
+    Get-WinEvent -ListLog *
+    """
+    try:
+        result = subprocess.run(['powershell', '-Command', command], 
+                               check=True, 
+                               text=True, 
+                               capture_output=True)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"Ошибка при выполнении команды: {e}")
+        print(f"Стек трассировки: {e.__traceback__}")        

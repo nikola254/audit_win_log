@@ -1,7 +1,8 @@
-from flask import render_template, flash, redirect, url_for, current_app
+from flask import render_template, flash, redirect, url_for, current_app, request
 from app import app
 from app.forms import LoginForm, TableForm, RegistrationForm
 from app.audit.script import handle_form_submission
+from app.audit.script_shell import execute_powershell_all_log
 
 
 @app.route('/')
@@ -36,20 +37,28 @@ def table():
     data = []
 
     if form.validate_on_submit():
-        table_name = form.table_to_display.data
+        # Проверяем, какая кнопка была нажата
+        if 'out_all_log' in request.form:
+            # Логика для отображения всех логов
+            data = execute_powershell_all_log()  # Предполагается, что у вас есть эта функция
+            current_app.logger.info("Displaying all logs.")
+            return render_template('table.html', title='Список всех логов', form=form, data=data)
         
-        if table_name == 'Criticals':
-            data = handle_form_submission('app/audit/logs/Criticals.txt', 'criticals')
-        elif table_name == 'Error':
-            data = handle_form_submission('app/audit/logs/Errors.txt', 'error')
-        elif table_name == 'Warning':
-            data = handle_form_submission('app/audit/logs/Warnings.txt', 'warning')
-        
-        # Логирование выбранной таблицы и полученных данных
-        current_app.logger.info(f"Selected table: {table_name}")
-        current_app.logger.info(f"Received data: {data[:5]}...")  # Выводим первые 5 элементов
-        
-        return render_template('table.html', title='Показать таблицу', form=form, data=data)
+        elif 'submit' in request.form:
+            table_name = form.table_to_display.data
+            
+            if table_name == 'Criticals':
+                data = handle_form_submission('app/audit/logs/Criticals.txt', 'criticals')
+            elif table_name == 'Error':
+                data = handle_form_submission('app/audit/logs/Errors.txt', 'error')
+            elif table_name == 'Warning':
+                data = handle_form_submission('app/audit/logs/Warnings.txt', 'warning')
+            
+            # Логирование выбранной таблицы и полученных данных
+            current_app.logger.info(f"Selected table: {table_name}")
+            current_app.logger.info(f"Received data: {data[:5]}...")  # Выводим первые 5 элементов
+            
+            return render_template('table.html', title='Показать таблицу', form=form, data=data)
     
     # Если форма не была отправлена или не прошла валидацию
     return render_template('table.html', title='Показать таблицу', form=form, data=[])

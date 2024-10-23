@@ -12,6 +12,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Sign In')
     
 class TableForm(FlaskForm):
+    out_all_log = SubmitField('Список всех логов')
     table_to_display = SelectField('Выберите таблицу для вывода', 
                                   choices=[('Criticals', 'Criticals'), ('Error', 'Error'), ('Warning', 'Warning')],
                                   validators=[DataRequired()])
