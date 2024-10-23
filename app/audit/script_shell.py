@@ -82,7 +82,14 @@ def execute_powershell_info():
         
 def execute_powershell_all_log():
     command = r"""
-    Get-WinEvent -ListLog *
+     Get-WinEvent -ListLog * |
+     ForEach-Object {
+         "LogMode: $($_.LogMode)"
+         "MaximumSizeInBytes: $($_.MaximumSizeInBytes)"
+         "RecordCount: $($_.RecordCount)"
+         "LogName: $($_.LogName)"
+         ""
+     } | Out-File -FilePath 'C:\Users\Admin\Desktop\ro01\audit_win_log\app\audit\logs\All_log_files.txt'
     """
     try:
         result = subprocess.run(['powershell', '-Command', command], 

@@ -112,3 +112,41 @@ def get_audit_log_data_from_db(table):
     cursor.execute(f"SELECT * FROM {table}")
     columns = [desc[0] for desc in cursor.description]
     return [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+def get_clear_all_log_file(file_path):
+        # Инициализируем список для хранения валидных строк
+    valid_lines = []
+    current_block = []  # Список для хранения текущего блока
+
+    # Открываем файл для чтения
+    with open(file_path, 'r') as file:
+        # Читаем все строки из файла
+        lines = file.readlines()
+        
+        # Обрабатываем каждую строку
+        for line in lines:
+            # Проверяем, является ли строка началом нового блока
+            if 'LogMode:' in line:
+                # Если текущий блок не пуст, проверяем его на валидность
+                if current_block:
+                    # Проверяем, есть ли в блоке RecordCount равный 0 или пуст
+                    if not any('RecordCount: 0' in l or 'RecordCount:' not in l for l in current_block):
+                        valid_lines.extend(current_block)  # Сохраняем валидный блок
+                # Сбрасываем текущий блок и добавляем новую строку
+                current_block = [line]
+            else:
+                # Добавляем строку в текущий блок
+                current_block.append(line)
+
+        # Проверяем последний блок после завершения цикла
+        if current_block:
+            if not any('RecordCount: 0' in l or 'RecordCount:' not in l for l in current_block):
+                valid_lines.extend(current_block)
+
+    # Записываем валидные строки обратно в файл
+    with open(file_path, 'w') as file:
+        file.writelines(valid_lines)
+
+# Пример использования
+get_clear_all_log_file('C:\\Users\\Admin\\Desktop\\ro01\\audit_win_log\\app\\audit\\logs\\All_log_files.txt')
+    
