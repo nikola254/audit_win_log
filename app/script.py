@@ -1,63 +1,122 @@
 import psycopg2
-import json
+import re
+import chardet
 import os
 
 # Establish a connection to the PostgreSQL database
-conn = psycopg2.connect(
-    host="localhost",
-    port=5432,
-    database="RO",
-    user="postgres",
-    password="root"
-)
+try:
+    conn = psycopg2.connect(
+        host="localhost",
+        port=5432,
+        database="RO",
+        user="postgres",
+        password="root"
+    )
+except UnicodeDecodeError:
+    print("UnicodeDecodeError occurred. Trying to connect with different encoding...")
+    conn = psycopg2.connect(
+        host="localhost",
+        port=5432,
+        database="RO",
+        user="postgres",
+        password="root",
+        options="-c client_encoding=UTF8"
+    )
+
 cursor = conn.cursor()
+
+
+def detect_encoding(file_path):
+    with open(file_path, 'rb') as file:
+        raw_data = file.read()
+    return chardet.detect(raw_data)['encoding']
+
+import re
 
 def parse_audit_log(file_path):
     events = []
-    # Парсим JSON файл
-    with open(file_path, 'r') as f:
-        data = json.load(f)
-    for event in data:
-        event_id = event['EventID']
-        event_type = event['SourceName']
-        event_time = event['TimeGenerated']
-        username = event['StringInserts'][0]
-        computer = event['StringInserts'][1]
-        events.append({
-            'event_id': event_id,
-            'event_type': event_type,
-            'event_time': event_time,
-            'username': username,
-            'computer': computer
-        })
-
+    detected_encoding = detect_encoding(file_path)
+    
+    try:
+        with open(file_path, 'r', encoding=detected_encoding) as f:
+            lines = f.readlines()
+    except Exception as e:
+        print(f"Error reading file with detected encoding: {e}")
+        print("Falling back to utf-8 encoding...")
+        with open(file_path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+    
+    for i in range(0, len(lines), 4):  # Группируем строки по 4 для каждой записи
+        event = {}
+        timestamp_match = re.search(r'\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}', lines[i].strip())
+        if timestamp_match:
+            event['event_time'] = timestamp_match.group(0)
+        else:
+            print(f"Warning: No timestamp found in line {i+1}. Skipping this event.")
+            continue
+        
+        event_id_match = re.search(r'\d+', lines[i+1].strip())
+        if event_id_match:
+            event['event_id'] = int(event_id_match.group(0))
+        else:
+            print(f"Warning: No event ID found in line {i+2}. Skipping this event.")
+            continue
+        
+        severity_match = re.search(r'[А-Яа-я]+', lines[i+2].strip())  # Поиск русских букв для уровня серьезности
+        if severity_match:
+            event['event_type'] = severity_match.group(0)
+        else:
+            print(f"Warning: No severity level found in line {i+3}. Skipping this event.")
+            continue
+        
+        description_start = lines[i+3].find(':')
+        if description_start != -1:
+            event['event_info'] = lines[i+3][description_start + 1:].strip()
+        else:
+            print(f"Warning: Unexpected format in line {i+4}. Skipping this event.")
+            continue
+        
+        required_fields = ['event_time', 'event_id', 'event_type', 'event_info']
+        for field in required_fields:
+            if field not in event:
+                print(f"Warning: Missing field '{field}' in event. Skipping this event.")
+                break
+        else:
+            events.append(event)
+    
     return events
 
+
+
+
 def get_audit_log_data(events):
+    sql_query = """
+    INSERT INTO criticals (event_time, event_id, event_type, event_info)
+    VALUES (%s, %s, %s, %s)
+    """
+    
     for event in events:
-        cursor.execute('''
-            INSERT INTO audit_new (event_id, event_type, event_time, username, computer)
-            SELECT %s, %s, %s, %s, %s
-            WHERE NOT EXISTS (
-                SELECT 1 FROM audit_new
-                WHERE event_type = %s AND event_time = %s AND username = %s AND computer = %s
-            )
-        ''', (event['event_id'], event['event_type'], event['event_time'], 
-             event['username'], event['computer'],
-             event['event_type'], event['event_time'], event['username'], event['computer']))
+        cursor.execute(sql_query, (
+            event['event_time'],
+            event['event_id'],
+            event['event_type'],
+            event['event_info']
+        ))
     
     conn.commit()
-def handle_form_submission(file_path=None):
-    if file_path:
-        events = parse_audit_log(file_path)
-    else:
-        # Здесь можно добавить логику для парсинга Windows Audit Log
-        print("Warning: Parsing Windows Audit Log is not implemented yet.")
-        events = []  # Временно возвращаем пустой список
+    print(f"Total of {cursor.rowcount} events processed")
+    return cursor.rowcount
+
+def handle_form_submission(file_path):
+    events = parse_audit_log(file_path)
     get_audit_log_data(events)
     return get_audit_log_data_from_db()
 
 def get_audit_log_data_from_db():
-    cursor.execute('SELECT * FROM audit_new')
+    cursor.execute('SELECT * FROM criticals')
     columns = [desc[0] for desc in cursor.description]
     return [dict(zip(columns, row)) for row in cursor.fetchall()]
+# # Вызов функции
+# result = parse_audit_log('Criticals.txt')
+# print(result)
+

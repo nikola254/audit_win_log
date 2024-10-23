@@ -35,7 +35,7 @@ def table():
     form = TableForm()
     data = []  # Инициализируйте data как пустой список
     if form.validate_on_submit():
-        data = handle_form_submission(file_path='app/audit.json')
+        data = handle_form_submission('app/Criticals.txt')
     return render_template('table.html', title='Показать таблицу', form=form, data=data)
 
 @app.route('/register')
