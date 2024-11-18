@@ -1,7 +1,8 @@
 import psycopg2
 import re
 import chardet
-from app.audit.script_shell import execute_powershell_criticals
+from app.audit.script_shell import execute_powershell_criticals, execute_powershell_all_log
+from flask import current_app
 
 try:
     conn = psycopg2.connect(
@@ -112,41 +113,81 @@ def get_audit_log_data_from_db(table):
     cursor.execute(f"SELECT * FROM {table}")
     columns = [desc[0] for desc in cursor.description]
     return [dict(zip(columns, row)) for row in cursor.fetchall()]
+# Эта функция парсит файл со всеми возможными лог файлами
+def parse_all_log_file(file_path):
+    logs = []
+    with open(file_path, 'r', encoding='utf-16-le') as file:  # Используем 'utf-16-le'
+        log_entry = {}
+        for line in file:
+            line = line.strip()
+            print(f"Читаем строку: '{line}'")  # Отладочное сообщение
+            if line:  # Проверяем, что строка не пустая
+                # Проверяем, содержит ли строка двоеточие
+                if ':' in line:
+                    key, value = line.split(': ', 1)  # Разделяем строку на ключ и значение
+                    log_entry[key] = value
+                    print(f"Добавляем ключ: '{key}', значение: '{value}'")  # Отладочное сообщение
+                else:
+                    print(f"Пропускаем строку без двоеточия: '{line}'")  # Отладочное сообщение
+            
+            # Если достигли конца лог-записи (пустая строка), добавляем запись в список
+            if line == '' and log_entry:
+                logs.append({
+                    'id': len(logs) + 1,  # id
+                    'log_mode': log_entry.get('LogMode'),
+                    'max_size': log_entry.get('MaximumSizeInBytes'),
+                    'record_count': log_entry.get('RecordCount'),
+                    'log_name': log_entry.get('LogName'),
+                })
+                print(f"Добавляем запись: {log_entry}")  # Отладочное сообщение
+                log_entry = {}  # Сбрасываем для следующей записи
 
-def get_clear_all_log_file(file_path):
-        # Инициализируем список для хранения валидных строк
-    valid_lines = []
-    current_block = []  # Список для хранения текущего блока
+        # Добавляем последнюю запись, если файл не заканчивается пустой строкой
+        if log_entry:
+            logs.append({
+                'id': len(logs) + 1,
+                'log_mode': log_entry.get('LogMode'),
+                'max_size': log_entry.get('MaximumSizeInBytes'),
+                'record_count': log_entry.get('RecordCount'),
+                'log_name': log_entry.get('LogName'),
+            })
+            print(f"Добавляем последнюю запись: {log_entry}")  # Отладочное сообщение
 
-    # Открываем файл для чтения
-    with open(file_path, 'r') as file:
-        # Читаем все строки из файла
-        lines = file.readlines()
-        
-        # Обрабатываем каждую строку
-        for line in lines:
-            # Проверяем, является ли строка началом нового блока
-            if 'LogMode:' in line:
-                # Если текущий блок не пуст, проверяем его на валидность
-                if current_block:
-                    # Проверяем, есть ли в блоке RecordCount равный 0 или пуст
-                    if not any('RecordCount: 0' in l or 'RecordCount:' not in l for l in current_block):
-                        valid_lines.extend(current_block)  # Сохраняем валидный блок
-                # Сбрасываем текущий блок и добавляем новую строку
-                current_block = [line]
-            else:
-                # Добавляем строку в текущий блок
-                current_block.append(line)
-
-        # Проверяем последний блок после завершения цикла
-        if current_block:
-            if not any('RecordCount: 0' in l or 'RecordCount:' not in l for l in current_block):
-                valid_lines.extend(current_block)
-
-    # Записываем валидные строки обратно в файл
-    with open(file_path, 'w') as file:
-        file.writelines(valid_lines)
-
-# Пример использования
-get_clear_all_log_file('C:\\Users\\Admin\\Desktop\\ro01\\audit_win_log\\app\\audit\\logs\\All_log_files.txt')
+    print("Полученные логи:")
+    for log in logs:
+        print(f"ID: {log['id']}, LogMode: {log['log_mode']}, MaximumSizeInBytes: {log['max_size']}, RecordCount: {log['record_count']}, LogName: {log['log_name']}")
     
+    return logs
+# Эта функция добавляет новую инфу в базу по разным видам логов
+def add_all_log_to_db(log_entries):
+    for entry in log_entries:
+        cursor.execute("""
+            INSERT INTO all_log_file 
+            (id, log_mode, max_size, record_count, log_name)
+            SELECT %(id)s, %(log_mode)s, %(max_size)s, %(record_count)s, %(log_name)s
+            WHERE NOT EXISTS (
+                SELECT 1 FROM all_log_file WHERE id = %(id)s
+            );
+        """, entry)
+    
+    conn.commit()
+
+    print(f"Выполнено вставок: {cursor.rowcount}")
+
+    
+def output_all_log_file(file_path, table):
+    try:
+        log_entries = parse_all_log_file(file_path)
+        if not log_entries:
+            print("Пустой список логов")
+            return []
+        
+        add_all_log_to_db(log_entries)
+        result = get_audit_log_data_from_db(table)
+        conn.commit()
+        return result
+    
+    except Exception as e:
+        current_app.logger.error(f"Ошибка при обработке файла {file_path}: {str(e)}")
+        conn.rollback()
+        raise

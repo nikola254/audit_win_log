@@ -1,8 +1,7 @@
 from flask import render_template, flash, redirect, url_for, current_app, request
 from app import app
 from app.forms import LoginForm, TableForm, RegistrationForm
-from app.audit.script import handle_form_submission
-from app.audit.script_shell import execute_powershell_all_log
+from app.audit.script import handle_form_submission, output_all_log_file
 
 
 @app.route('/')
@@ -35,33 +34,61 @@ def login():
 def table():
     form = TableForm()
     data = []
+    table_data = False
+    selected_table = False
 
-    if form.validate_on_submit():
-        # Проверяем, какая кнопка была нажата
-        if 'out_all_log' in request.form:
-            # Логика для отображения всех логов
-            data = execute_powershell_all_log()  # Предполагается, что у вас есть эта функция
-            current_app.logger.info("Displaying all logs.")
-            return render_template('table.html', title='Список всех логов', form=form, data=data)
-        
-        elif 'submit' in request.form:
-            table_name = form.table_to_display.data
-            
-            if table_name == 'Criticals':
-                data = handle_form_submission('app/audit/logs/Criticals.txt', 'criticals')
-            elif table_name == 'Error':
-                data = handle_form_submission('app/audit/logs/Errors.txt', 'error')
-            elif table_name == 'Warning':
-                data = handle_form_submission('app/audit/logs/Warnings.txt', 'warning')
-            
-            # Логирование выбранной таблицы и полученных данных
-            current_app.logger.info(f"Selected table: {table_name}")
-            current_app.logger.info(f"Received data: {data[:5]}...")  # Выводим первые 5 элементов
-            
-            return render_template('table.html', title='Показать таблицу', form=form, data=data)
-    
-    # Если форма не была отправлена или не прошла валидацию
-    return render_template('table.html', title='Показать таблицу', form=form, data=[])
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            if 'out_all_log' in request.form:
+                try:
+                    data = output_all_log_file('app/audit/logs/All_log_files.txt', 'all_log_file')
+                    table_data = True
+                    selected_table = 'all_log'
+                    return render_template('table.html', title='Список всех логов', form=form, data=data, table_data=table_data, selected_table=selected_table)
+                except Exception as e:
+                    current_app.logger.error(f"Ошибка при получении данных о всех логах: {str(e)}")
+                    flash(f"Ошибка при получении данных о всех логов: {str(e)}", category='error')
+                    return redirect(url_for('table'))
+
+            elif 'submit' in request.form:
+                table_name = form.table_to_display.data
+                
+                if table_name == 'Criticals':
+                    try:
+                        data = handle_form_submission('app/audit/logs/Criticals.txt', 'criticals')
+                        table_data = True
+                        selected_table = 'criticals'
+                        return render_template('table.html', title=f'Таблица {table_name}', form=form, data=data, table_data=table_data, selected_table=selected_table)
+                    except Exception as e:
+                        current_app.logger.error(f"Ошибка при обработке таблицы Критичных: {str(e)}")
+                        flash(f"Ошибка при обработке таблицы Критичных: {str(e)}", category='error')
+                        return redirect(url_for('table'))
+
+                elif table_name == 'Error':
+                    try:
+                        data = handle_form_submission('app/audit/logs/Errors.txt', 'error')
+                        table_data = True
+                        selected_table = 'error'
+                        return render_template('table.html', title=f'Таблица {table_name}', form=form, data=data, table_data=table_data, selected_table=selected_table)
+                    except Exception as e:
+                        current_app.logger.error(f"Ошибка при обработке таблицы Ошибок: {str(e)}")
+                        flash(f"Ошибка при обработке таблицы Ошибок: {str(e)}", category='error')
+                        return redirect(url_for('table'))
+
+                elif table_name == 'Warning':
+                    try:
+                        data = handle_form_submission('app/audit/logs/Warnings.txt', 'warning')
+                        table_data = True
+                        selected_table = 'warning'
+                        return render_template('table.html', title=f'Таблица {table_name}', form=form, data=data, table_data=table_data, selected_table=selected_table)
+                    except Exception as e:
+                        current_app.logger.error(f"Ошибка при обработке таблицы Предупреждений: {str(e)}")
+                        flash(f"Ошибка при обработке таблицы Предупреждений: {str(e)}", category='error')
+                        return redirect(url_for('table'))
+
+    # Если GET-запрос или форма не была отправлена
+    return render_template('table.html', title='Выбор таблицы', form=form, data=[], table_data=False, selected_table=None)
+
 
 @app.route('/register')
 def register():

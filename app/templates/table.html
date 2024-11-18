@@ -5,20 +5,38 @@
     <meta charset="utf-8" />
     
     <h1>Выбор таблицы</h1>
-
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <div class="centered">
-            <div>{{ form.out_all_log() }}</div> <!-- Первая кнопка по центру -->
+            <div>{{ form.out_all_log() }}</div> <!-- Первая кнопка -->
         </div>
+        
         <div class="row">
             <div>{{ form.table_to_display() }}</div> <!-- Выпадающий список -->
             <div>{{ form.submit() }}</div> <!-- Вторая кнопка -->
         </div>
     </form>
-    {% if form.table_to_display.data %}
-    <h2>Данные таблицы {{ form.table_to_display.data }}</h2>
+
+   
+    <h2>Данные таблицы {{ selected_table }}</h2>
     <table>
+        {% if selected_table == 'all_log' %}
+        <tr>
+            <th>LogMode</th>
+            <th>MaximumSizeInBytes</th>
+            <th>RecordCount</th>
+            <th>LogName</th>
+        </tr>
+        {% for item in data %}
+        <tr>
+            <td>{{ item.log_mode }}</td>
+            <td>{{ item.max_size }}</td>
+            <td>{{ item.record_count }}</td>
+            <td>{{ item.log_name}}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+        {% if selected_table == 'criticals' %}
         <tr>
             <th>Event ID</th>
             <th>Source Name</th>
@@ -33,7 +51,40 @@
             <td>{{ item.event_info}}</td>
         </tr>
         {% endfor %}
+        {% endif %}
+        {% if selected_table == 'error' %}
+        <tr>
+            <th>Event ID</th>
+            <th>Source Name</th>
+            <th>Time Generated</th>
+            <th>String Inserts</th>
+        </tr>
+        {% for item in data %}
+        <tr>
+            <td>{{ item.event_id }}</td>
+            <td>{{ item.event_type }}</td>
+            <td>{{ item.event_time }}</td>
+            <td>{{ item.event_info}}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+        {% if selected_table == 'warning' %}
+        <tr>
+            <th>Event ID</th>
+            <th>Source Name</th>
+            <th>Time Generated</th>
+            <th>String Inserts</th>
+        </tr>
+        {% for item in data %}
+        <tr>
+            <td>{{ item.event_id }}</td>
+            <td>{{ item.event_type }}</td>
+            <td>{{ item.event_time }}</td>
+            <td>{{ item.event_info}}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
     </table>
-    {% endif %}
+    
 
 {% endblock %}

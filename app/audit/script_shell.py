@@ -1,4 +1,6 @@
 import subprocess
+import os
+
 
 def execute_powershell_criticals():
     command = r"""
@@ -82,21 +84,34 @@ def execute_powershell_info():
         
 def execute_powershell_all_log():
     command = r"""
-     Get-WinEvent -ListLog * |
-     ForEach-Object {
-         "LogMode: $($_.LogMode)"
-         "MaximumSizeInBytes: $($_.MaximumSizeInBytes)"
-         "RecordCount: $($_.RecordCount)"
-         "LogName: $($_.LogName)"
-         ""
-     } | Out-File -FilePath 'C:\Users\Admin\Desktop\ro01\audit_win_log\app\audit\logs\All_log_files.txt'
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+    Get-WinEvent -ListLog * |
+    Where-Object { $_.RecordCount -gt 0 } |  
+    ForEach-Object {
+        "LogMode: $($_.LogMode)"
+        "MaximumSizeInBytes: $($_.MaximumSizeInBytes)"
+        "RecordCount: $($_.RecordCount)"
+        "LogName: $($_.LogName)"
+        ""
+    }
     """
+
     try:
-        result = subprocess.run(['powershell', '-Command', command], 
-                               check=True, 
-                               text=True, 
+        # Запускаем PowerShell с правами администратора
+        admin_command = f'powershell -Command "{command}"'
+
+        result = subprocess.run(['powershell.exe', '-Command', admin_command],
+                               check=True,
+                               text=True,
                                capture_output=True)
-        return result.stdout
+
+        print("Команда успешно выполнена.")
+        print("Вывод команды:")
+        print(result.stdout)
+
     except subprocess.CalledProcessError as e:
         print(f"Ошибка при выполнении команды: {e}")
-        print(f"Стек трассировки: {e.__traceback__}")        
+        print(f"Стек трассировки: {e.__traceback__}")
+
+    except Exception as e:
+        print(f"Неожиданная ошибка: {e}")
