@@ -4,6 +4,8 @@
 # flask db migrate -m "users table"
 # Далее необходимо сгенерировать сценарий миграции
 # flask db upgrade
+# Откатить назад
+# flask db stamp
 
 from datetime import datetime, timezone
 from typing import Optional
@@ -49,28 +51,33 @@ class Post(db.Model):
 class Criticals(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True) 
     event_time: so.Mapped[datetime] = so.mapped_column()
-    event_id: so.Mapped[int] = so.mapped_column(sa.Integer)
-    event_type: so.Mapped[str] = so.mapped_column(sa.String(256))
-    event_info: so.Mapped[str] = so.mapped_column(sa.String(256))
+    event_id: so.Mapped[int] = so.mapped_column(sa.Integer())
+    event_type: so.Mapped[str] = so.mapped_column(sa.Text())
+    event_info: so.Mapped[str] = so.mapped_column(sa.Text())
     
 class Error(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True) 
     event_time: so.Mapped[datetime] = so.mapped_column()
-    event_id: so.Mapped[int] = so.mapped_column(sa.Integer)
-    event_type: so.Mapped[str] = so.mapped_column(sa.String(256))
-    event_info: so.Mapped[str] = so.mapped_column(sa.String(256))
+    event_id: so.Mapped[int] = so.mapped_column(sa.Integer())
+    event_type: so.Mapped[str] = so.mapped_column(sa.Text())
+    event_info: so.Mapped[str] = so.mapped_column(sa.Text())
     
 class Warning(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True) 
     event_time: so.Mapped[datetime] = so.mapped_column()
-    event_id: so.Mapped[int] = so.mapped_column(sa.Integer)
-    event_type: so.Mapped[str] = so.mapped_column(sa.String(256))
-    event_info: so.Mapped[str] = so.mapped_column(sa.String(256))
+    event_id: so.Mapped[int] = so.mapped_column(sa.Integer())
+    event_type: so.Mapped[str] = so.mapped_column(sa.Text())
+    event_info: so.Mapped[str] = so.mapped_column(sa.Text())
     
 class All_log_file(db.Model):
-    id: so.Mapped[int] = so.mapped_column(primary_key=True) 
-    log_mode: so.Mapped[str] = so.mapped_column(sa.String(256))
-    max_size: so.Mapped[int] = so.mapped_column(sa.Integer)
-    record_count: so.Mapped[int] = so.mapped_column(sa.Integer)
-    log_name: so.Mapped[str] = so.mapped_column(sa.String(256))
+    id: so.Mapped[Optional[int]] = so.mapped_column(primary_key=True)
+    log_mode: so.Mapped[Optional[str]] = so.mapped_column(sa.Text())
+    max_size: so.Mapped[Optional[int]] = so.mapped_column(sa.Integer())
+    record_count: so.Mapped[Optional[int]] = so.mapped_column(sa.Integer())
+    log_name: so.Mapped[Optional[str]] = so.mapped_column(sa.Text())
+    time_created: so.Mapped[Optional[str]] = so.mapped_column(sa.Text())
+    level_display_name: so.Mapped[Optional[str]] = so.mapped_column(sa.Text())
+    message: so.Mapped[Optional[str]] = so.mapped_column(sa.Text())
+    
+    
     

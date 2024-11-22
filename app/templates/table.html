@@ -26,6 +26,9 @@
             <th>MaximumSizeInBytes</th>
             <th>RecordCount</th>
             <th>LogName</th>
+            <th>TimeCreated</th>
+            <th>LevelDisplayName</th>
+            <th>Message</th>
         </tr>
         {% for item in data %}
         <tr>
@@ -33,6 +36,9 @@
             <td>{{ item.max_size }}</td>
             <td>{{ item.record_count }}</td>
             <td>{{ item.log_name}}</td>
+            <td>{{ item.time_created}}</td>
+            <td>{{ item.level_display_name}}</td>
+            <td>{{ item.message}}</td>
         </tr>
         {% endfor %}
         {% endif %}

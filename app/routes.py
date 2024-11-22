@@ -41,7 +41,7 @@ def table():
         if form.validate_on_submit():
             if 'out_all_log' in request.form:
                 try:
-                    data = output_all_log_file('app/audit/logs/All_log_files.txt', 'all_log_file')
+                    data = output_all_log_file('app/audit/logs/Informations.txt', 'all_log_file')
                     table_data = True
                     selected_table = 'all_log'
                     return render_template('table.html', title='Список всех логов', form=form, data=data, table_data=table_data, selected_table=selected_table)
