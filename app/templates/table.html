@@ -17,80 +17,79 @@
         </div>
     </form>
 
-   
     <h2>Данные таблицы {{ selected_table }}</h2>
-    <table>
-        {% if selected_table == 'all_log' %}
-        <tr>
-            <th>LogMode</th>
-            <th>MaximumSizeInBytes</th>
-            <th>RecordCount</th>
-            <th>LogName</th>
-            <th>TimeCreated</th>
-            <th>LevelDisplayName</th>
-            <th>Message</th>
-        </tr>
-        {% for item in data %}
-        <tr>
-            <td>{{ item.log_mode }}</td>
-            <td>{{ item.max_size }}</td>
-            <td>{{ item.record_count }}</td>
-            <td>{{ item.log_name}}</td>
-            <td>{{ item.time_created}}</td>
-            <td>{{ item.level_display_name}}</td>
-            <td>{{ item.message}}</td>
-        </tr>
-        {% endfor %}
-        {% endif %}
-        {% if selected_table == 'criticals' %}
-        <tr>
-            <th>Event ID</th>
-            <th>Source Name</th>
-            <th>Time Generated</th>
-            <th>String Inserts</th>
-        </tr>
-        {% for item in data %}
-        <tr>
-            <td>{{ item.event_id }}</td>
-            <td>{{ item.event_type }}</td>
-            <td>{{ item.event_time }}</td>
-            <td>{{ item.event_info}}</td>
-        </tr>
-        {% endfor %}
-        {% endif %}
-        {% if selected_table == 'error' %}
-        <tr>
-            <th>Event ID</th>
-            <th>Source Name</th>
-            <th>Time Generated</th>
-            <th>String Inserts</th>
-        </tr>
-        {% for item in data %}
-        <tr>
-            <td>{{ item.event_id }}</td>
-            <td>{{ item.event_type }}</td>
-            <td>{{ item.event_time }}</td>
-            <td>{{ item.event_info}}</td>
-        </tr>
-        {% endfor %}
-        {% endif %}
-        {% if selected_table == 'warning' %}
-        <tr>
-            <th>Event ID</th>
-            <th>Source Name</th>
-            <th>Time Generated</th>
-            <th>String Inserts</th>
-        </tr>
-        {% for item in data %}
-        <tr>
-            <td>{{ item.event_id }}</td>
-            <td>{{ item.event_type }}</td>
-            <td>{{ item.event_time }}</td>
-            <td>{{ item.event_info}}</td>
-        </tr>
-        {% endfor %}
-        {% endif %}
-    </table>
-    
-
+    <div class="table-container {% if selected_table == 'all_log' %}responsive-table{% endif %}">
+        <table>
+            {% if selected_table == 'all_log' %}
+            <tr>
+                <th>LogMode</th>
+                <th>MaximumSizeInBytes</th>
+                <th>RecordCount</th>
+                <th>LogName</th>
+                <th>TimeCreated</th>
+                <th>LevelDisplayName</th>
+                <th>Message</th>
+            </tr>
+            {% for item in data %}
+            <tr>
+                <td>{{ item.log_mode }}</td>
+                <td>{{ item.max_size }}</td>
+                <td>{{ item.record_count }}</td>
+                <td>{{ item.log_name }}</td>
+                <td>{{ item.time_created }}</td>
+                <td>{{ item.level_display_name }}</td>
+                <td>{{ item.message }}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% if selected_table == 'criticals' %}
+            <tr>
+                <th>Event ID</th>
+                <th>Source Name</th>
+                <th>Time Generated</th>
+                <th>String Inserts</th>
+            </tr>
+            {% for item in data %}
+            <tr>
+                <td>{{ item.event_id }}</td>
+                <td>{{ item.event_type }}</td>
+                <td>{{ item.event_time }}</td>
+                <td>{{ item.event_info }}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% if selected_table == 'error' %}
+            <tr>
+                <th>Event ID</th>
+                <th>Source Name</th>
+                <th>Time Generated</th>
+                <th>String Inserts</th>
+            </tr>
+            {% for item in data %}
+            <tr>
+                <td>{{ item.event_id }}</td>
+                <td>{{ item.event_type }}</td>
+                <td>{{ item.event_time }}</td>
+                <td>{{ item.event_info }}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% if selected_table == 'warning' %}
+            <tr>
+                <th>Event ID</th>
+                <th>Source Name</th>
+                <th>Time Generated</th>
+                <th>String Inserts</th>
+            </tr>
+            {% for item in data %}
+            <tr>
+                <td>{{ item.event_id }}</td>
+                <td>{{ item.event_type }}</td>
+                <td>{{ item.event_time }}</td>
+                <td>{{ item.event_info }}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </table>
+    </div>
 {% endblock %}

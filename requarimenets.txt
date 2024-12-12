@@ -1,3 +1,6 @@
 flask
 flask_login
 email-validator
+pandas
+sklearn
+scikit-learn

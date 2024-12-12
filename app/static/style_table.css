@@ -13,22 +13,28 @@ h2 {
     padding-left: 20px;
 }
 
+/* Контейнер для таблицы с горизонтальной прокруткой */
+.table-container {
+    overflow-x: auto; /* Добавляет горизонтальную прокрутку при необходимости */
+    margin-top: 20px; /* Отступ сверху */
+    max-width: 100%; /* Устанавливаем максимальную ширину контейнера */
+}
+
 table {
-    width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
 }
 
 th, td {
     border: 1px solid #ddd;
     padding: 8px;
-    text-align: center;
+    text-align: center; 
+    word-wrap: break-word; /* Позволяет разрывать длинные слова */
+
 }
-td:last-child{
+
+td:last-child {
     text-align: left;
 }
-
-
 
 th {
     background-color: #f2f2f2;
@@ -42,7 +48,6 @@ tr:nth-child(even) {
 tr:hover {
     background-color: #e6e6e6;
 }
-
 
 #table_to_display {
     width: 100%; /* Уменьшите ширину по необходимости */
@@ -78,7 +83,6 @@ tr:hover {
     font-weight: bold;
 }
 
-/* Остальные стили остаются без изменений */
 input[type="submit"], input[type="button"], input[type="reset"] {
     display: inline-block;
     width: 100%;
@@ -98,7 +102,6 @@ input[type="submit"]:hover, input[type="button"]:hover, input[type="reset"]:hove
     background-color: #0056b3;
 }
 
-/* Дополнительные стили для кнопки "Показать таблицу" */
 input[type="submit"][value="Показать таблицу"] {
     background-color: #007bff;
     color: white;
@@ -125,4 +128,22 @@ input[type="submit"][value="Показать таблицу"]:hover {
     justify-content: center;
     align-items: center;
     gap: 20px;
+}
+
+/* Стили для адаптивной таблицы */
+.responsive-table {
+    overflow-x: auto; /* Добавляет горизонтальную прокрутку при необходимости */
+    margin-top: 20px; /* Отступ сверху */
+}
+
+.responsive-table table {
+    border-collapse: collapse;
+}
+
+.responsive-table th, .responsive-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+    word-wrap: break-word; /* Позволяет разрывать длинные слова */
+    max-width: 150px; /* Устанавливаем максимальную ширину ячейки */
 }

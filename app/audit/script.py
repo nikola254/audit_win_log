@@ -1,7 +1,7 @@
 import psycopg2
 import re
 import chardet
-from app.audit.script_shell import execute_powershell_criticals, execute_powershell_all_log, execute_powershell_all_log_and_10first
+from app.audit.script_shell import execute_powershell_criticals, execute_powershell_all_log_and_10first
 from flask import current_app
 
 try:
@@ -243,16 +243,16 @@ def parse_log_file_1(file_path):
 
     return logs  # Возвращаем список логов
 
-# Пример использования
-log_file_path = 'C:\\Users\\Admin\\Desktop\\ro01\\audit_win_log\\app\\audit\\logs\\Informations.txt'
-parsed_logs = parse_log_file_1(log_file_path)
+# # Пример использования
+# log_file_path = 'C:\\Users\\Admin\\Desktop\\ro01\\audit_win_log\\app\\audit\\logs\\Informations.txt'
+# parsed_logs = parse_log_file_1(log_file_path)
 
 # Проверка на наличие данных перед итерированием
-if parsed_logs:
-    for log in parsed_logs:
-        print(log)
-else:
-    print("Ошибка: не удалось получить данные о логах.")
+# if parsed_logs:
+#     for log in parsed_logs:
+#         print(log)
+# else:
+#     print("Ошибка: не удалось получить данные о логах.")
 
 
 def add_all_log_to_db_first_10(log_entries):

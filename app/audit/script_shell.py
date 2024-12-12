@@ -30,7 +30,7 @@ def execute_powershell_error():
     } -MaxEvents 200 | 
     Select-Object TimeCreated, Id, LevelDisplayName, Message |
     Format-List TimeCreated, Id, LevelDisplayName, Message |
-    Out-File -FilePath 'C:\Users\Admin\Desktop\ro01\audit_win_log\app\audit\logs\Erors.txt'
+    Out-File -FilePath 'C:\Users\Admin\Desktop\ro01\audit_win_log\app\audit\logs\Errors.txt'
     """
     try:
         result = subprocess.run(['powershell', '-Command', command], 
@@ -81,42 +81,7 @@ def execute_powershell_info():
     except subprocess.CalledProcessError as e:
         print(f"Ошибка при выполнении команды: {e}")
         print(f"Стек трассировки: {e.__traceback__}")
-        
-def execute_powershell_all_log():
-    command = r"""
-    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-    Get-WinEvent -ListLog * |
-    Where-Object { $_.RecordCount -gt 0 } |  
-    ForEach-Object {
-        "LogMode: $($_.LogMode)"
-        "MaximumSizeInBytes: $($_.MaximumSizeInBytes)"
-        "RecordCount: $($_.RecordCount)"
-        "LogName: $($_.LogName)"
-        ""
-    }
-    """
-
-    try:
-        # Запускаем PowerShell с правами администратора
-        admin_command = f'powershell -Command "{command}"'
-
-        result = subprocess.run(['powershell.exe', '-Command', admin_command],
-                               check=True,
-                               text=True,
-                               capture_output=True)
-
-        print("Команда успешно выполнена.")
-        print("Вывод команды:")
-        print(result.stdout)
-
-    except subprocess.CalledProcessError as e:
-        print(f"Ошибка при выполнении команды: {e}")
-        print(f"Стек трассировки: {e.__traceback__}")
-
-    except Exception as e:
-        print(f"Неожиданная ошибка: {e}")
-        
-        
+            
 def execute_powershell_all_log_and_10first():
     command = r"""
     Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
@@ -171,20 +136,21 @@ def execute_powershell_all_log_and_10first():
 
     try:
         # Запускаем PowerShell с правами администратора
-        admin_command = f'powershell -Command "{command}"'
+        admin_command = f'powershell -Command "Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass; {command}"'
 
         result = subprocess.run(['powershell.exe', '-Command', admin_command],
-                               check=True,
-                               text=True,
-                               capture_output=True)
+                            check=True,
+                            text=True,
+                            capture_output=True)
 
         print("Команда успешно выполнена.")
         print("Вывод команды:")
         print(result.stdout)
 
     except subprocess.CalledProcessError as e:
-        print(f"Ошибка при выполнении команды: {e}")
+        print(f"Ошибка при выполнении команды '{admin_command}': {e}")
         print(f"Стек трассировки: {e.__traceback__}")
+        print(f"Статус команды: {e.returncode}")
 
     except Exception as e:
         print(f"Неожиданная ошибка: {e}")
