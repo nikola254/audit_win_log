@@ -2,7 +2,6 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    background-image: url("ret.jpg"); /* Путь к изображению */
     background-size: cover; /* Растянуть изображение на весь экран */
     background-repeat: no-repeat; /* Не повторять изображение */
     background-position: center; /* Центрировать изображение */

@@ -91,9 +91,9 @@ def table():
                 try:
                     # Здесь добавьте код для выполнения классификации и сохранения изображений
                     images = [
-                                url_for('static', filename='confusion_matrix.png'),
-                                url_for('static', filename='feature_importance.png'),
-                                url_for('static', filename='decision_tree.png'),
+                                url_for('static', filename='images/confusion_matrix.png'),
+                                url_for('static', filename='images/feature_importance.png'),
+                                url_for('static', filename='images/decision_tree.png'),
                             ]  # Пример имен файлов изображений
                     # Вы можете добавить логику для генерации изображений на основе ваших данных
                     return render_template('table.html', title='Результаты классификации', form=form, data=data, table_data=table_data, selected_table=selected_table, images=images)
