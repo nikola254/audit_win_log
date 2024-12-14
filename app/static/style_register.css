@@ -2,11 +2,10 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #f4f4f4;
 }
 
 h1 {
-    color: #333;
+    color: #ffffff;
     text-align: center;
 }
 
@@ -42,7 +41,7 @@ input[type="submit"]:hover {
     padding: 5px 30px;
     background-color: #f9f9f9;
     border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
 .user-pass form {
@@ -81,4 +80,8 @@ input[type="submit"]:hover {
     color: red;
     font-size: 14px;
     margin-top: 5px;
+}
+
+label {
+    color: white;
 }

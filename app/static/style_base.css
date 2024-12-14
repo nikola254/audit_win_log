@@ -2,11 +2,16 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #f4f4f4;
+    background-image: url("ret.jpg"); /* Путь к изображению */
+    background-size: cover; /* Растянуть изображение на весь экран */
+    background-repeat: no-repeat; /* Не повторять изображение */
+    background-position: center; /* Центрировать изображение */
+    min-height: 100vh; /* Убедитесь, что body занимает всю высоту */
+    background-attachment: fixed;
 }
 
 h1 {
-    color: #333;
+    color: #ffffff;
     text-align: center;
 }
 
@@ -14,3 +19,33 @@ h1 {
     text-align: center;
     margin-bottom: 20px;
 }
+.header{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: #ffffff;
+}
+.link{
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    padding-bottom: 2px;
+}
+.link:after {
+    display:block;
+    content: '';
+    border-bottom: 2px solid blue;
+    transform: scaleX(0);  
+    transition: transform 250ms ease-in-out;
+  }
+.link:hover{
+ color: blue;
+}
+.link:hover:after { 
+    color: blue;
+    transform: scaleX(1); 
+}
+.link.active{
+    color: rgb(127, 127, 252) !important;;
+}
+
+

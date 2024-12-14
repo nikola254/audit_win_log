@@ -17,6 +17,7 @@ class TableForm(FlaskForm):
                                   choices=[('Criticals', 'Criticals'), ('Error', 'Error'), ('Warning', 'Warning')],
                                   validators=[DataRequired()])
     submit = SubmitField('Показать таблицу')
+    classify = SubmitField('Классифицировать')
     
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])

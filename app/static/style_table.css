@@ -2,15 +2,15 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #f4f4f4;
 }
 
 h1 {
-    color: #333;
+    color: #ffffff;
 }
 
 h2 {
     padding-left: 20px;
+    color: #ffffff;
 }
 
 /* Контейнер для таблицы с горизонтальной прокруткой */
@@ -22,6 +22,7 @@ h2 {
 
 table {
     border-collapse: collapse;
+    width: 100%;
 }
 
 th, td {
@@ -29,7 +30,8 @@ th, td {
     padding: 8px;
     text-align: center; 
     word-wrap: break-word; /* Позволяет разрывать длинные слова */
-
+    width: auto; /* Устанавливаем ширину ячеек на автоматическую */
+    min-width: 100px;
 }
 
 td:last-child {
@@ -43,6 +45,10 @@ th {
 
 tr:nth-child(even) {
     background-color: #f9f9f9;
+}
+
+tr:nth-child(odd) {
+    background-color: #ffffff; /* Цвет для нечетных строк */
 }
 
 tr:hover {
@@ -130,6 +136,9 @@ input[type="submit"][value="Показать таблицу"]:hover {
     gap: 20px;
 }
 
+.centered div{
+    margin-right: 10px;
+}
 /* Стили для адаптивной таблицы */
 .responsive-table {
     overflow-x: auto; /* Добавляет горизонтальную прокрутку при необходимости */
@@ -146,4 +155,37 @@ input[type="submit"][value="Показать таблицу"]:hover {
     text-align: center;
     word-wrap: break-word; /* Позволяет разрывать длинные слова */
     max-width: 150px; /* Устанавливаем максимальную ширину ячейки */
+}
+.image-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.image-container img{
+    padding: 0 !important;
+}
+.image-container img:first-child{
+    height: 480px !important;
+    width: 660px;
+}
+.image-container img:last-child{
+    margin-top: 20px !important;
+}
+
+.centered-heading {
+    padding-top: 20px;
+    margin-top: 20px;
+    margin: 0px 500px; /* Отступы сверху и снизу */
+    font-size: 22px; /* Размер шрифта (можно изменить по желанию) */
+    color: #ffffff; /* Цвет текста (можно изменить по желанию) */
+}
+
+.message-column {
+    width: 450px; /* Установите желаемую ширину для столбца Message */
+    min-width: 450px; /* Установите минимальную ширину для столбца Message */
+}
+.centered-12 {
+    font-size: 22px; /* Размер шрифта (можно изменить по желанию) */
+    color: #ffffff;
 }

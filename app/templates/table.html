@@ -1,95 +1,114 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='style_table.css') }}">
-    <meta charset="utf-8" />
-    
-    <h1>Выбор таблицы</h1>
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <div class="centered">
-            <div>{{ form.out_all_log() }}</div> <!-- Первая кнопка -->
-        </div>
-        
-        <div class="row">
-            <div>{{ form.table_to_display() }}</div> <!-- Выпадающий список -->
-            <div>{{ form.submit() }}</div> <!-- Вторая кнопка -->
-        </div>
-    </form>
+   <link rel="stylesheet" href="{{ url_for('static', filename='style_table.css') }}">
+   <meta charset="utf-8" />
+   
+   <h1>Выбор таблицы</h1>
+   <form action="" method="post">
+       {{ form.hidden_tag() }}
+       <div class="centered">
+           <div>{{ form.out_all_log() }}</div> <!-- Первая кнопка -->
+           <div>{{ form.classify() }}</div> <!-- Кнопка "Классифицировать" -->
+       </div>
+       
+       <div class="row">
+           <div>{{ form.table_to_display() }}</div> <!-- Выпадающий список -->
+           <div>{{ form.submit() }}</div> <!-- Вторая кнопка -->
+       </div>
+   </form>
 
-    <h2>Данные таблицы {{ selected_table }}</h2>
-    <div class="table-container {% if selected_table == 'all_log' %}responsive-table{% endif %}">
-        <table>
-            {% if selected_table == 'all_log' %}
-            <tr>
-                <th>LogMode</th>
-                <th>MaximumSizeInBytes</th>
-                <th>RecordCount</th>
-                <th>LogName</th>
-                <th>TimeCreated</th>
-                <th>LevelDisplayName</th>
-                <th>Message</th>
-            </tr>
-            {% for item in data %}
-            <tr>
-                <td>{{ item.log_mode }}</td>
-                <td>{{ item.max_size }}</td>
-                <td>{{ item.record_count }}</td>
-                <td>{{ item.log_name }}</td>
-                <td>{{ item.time_created }}</td>
-                <td>{{ item.level_display_name }}</td>
-                <td>{{ item.message }}</td>
-            </tr>
-            {% endfor %}
+   <div class="table-container {% if selected_table == 'all_log' %}responsive-table{% endif %}">
+       
+       <table>
+           {% if selected_table == 'all_log' %}
+           <h2>Данные таблицы {{ selected_table }}</h2>
+           <tr>
+               <th>LogMode</th>
+               <th>MaximumSizeInBytes</th>
+               <th>RecordCount</th>
+               <th>LogName</th>
+               <th>TimeCreated</th>
+               <th>LevelDisplayName</th>
+               <th class='message-column'>Message</th>
+           </tr>
+           {% for item in data %}
+           <tr>
+               <td>{{ item.log_mode }}</td>
+               <td>{{ item.max_size }}</td>
+               <td>{{ item.record_count }}</td>
+               <td>{{ item.log_name }}</td>
+               <td>{{ item.time_created }}</td>
+               <td>{{ item.level_display_name }}</td>
+               <td>{{ item.message }}</td>
+           </tr>
+           {% endfor %}
+           {% endif %}
+           {% if selected_table == 'criticals' %}
+           <h2>Данные таблицы {{ selected_table }}</h2>
+           <tr>
+               <th>Event ID</th>
+               <th>Source Name</th>
+               <th>Time Generated</th>
+               <th>String Inserts</th>
+           </tr>
+           {% for item in data %}
+           <tr>
+               <td>{{ item.event_id }}</td>
+               <td>{{ item.event_type }}</td>
+               <td>{{ item.event_time }}</td>
+               <td>{{ item.event_info }}</td>
+           </tr>
+           {% endfor %}
+           {% endif %}
+           {% if selected_table == 'error' %}
+           <h2>Данные таблицы {{ selected_table }}</h2>
+           <tr>
+               <th>Event ID</th>
+               <th>Source Name</th>
+               <th>Time Generated</th>
+               <th>String Inserts</th>
+           </tr>
+           {% for item in data %}
+           <tr>
+               <td>{{ item.event_id }}</td>
+               <td>{{ item.event_type }}</td>
+               <td>{{ item.event_time }}</td>
+               <td>{{ item.event_info }}</td>
+           </tr>
+           {% endfor %}
+           {% endif %}
+           {% if selected_table == 'warning' %}
+           <h2>Данные таблицы {{ selected_table }}</h2>
+           <tr>
+               <th>Event ID</th>
+               <th>Source Name</th>
+               <th>Time Generated</th>
+               <th>String Inserts</th>
+           </tr>
+           {% for item in data %}
+           <tr>
+               <td>{{ item.event_id }}</td>
+               <td>{{ item.event_type }}</td>
+               <td>{{ item.event_time }}</td>
+               <td>{{ item.event_info }}</td>
+           </tr>
+           {% endfor %}
+           {% endif %}
+       </table>
+   </div>
+
+   {% if images %}
+   <h2 class="centered-12">Результаты классификации</h2>
+
+   <div class="image-container">
+       {% for image in images %}
+            <img src="{{ image }}" alt="Classification Result" style="max-width: 100%; height: auto; margin-right: 10px; padding: 10px">
+            {% if loop.index % 2 == 0 %}
+                <h2 class="centered-heading">Дерево принятия решений</h2>
             {% endif %}
-            {% if selected_table == 'criticals' %}
-            <tr>
-                <th>Event ID</th>
-                <th>Source Name</th>
-                <th>Time Generated</th>
-                <th>String Inserts</th>
-            </tr>
-            {% for item in data %}
-            <tr>
-                <td>{{ item.event_id }}</td>
-                <td>{{ item.event_type }}</td>
-                <td>{{ item.event_time }}</td>
-                <td>{{ item.event_info }}</td>
-            </tr>
-            {% endfor %}
-            {% endif %}
-            {% if selected_table == 'error' %}
-            <tr>
-                <th>Event ID</th>
-                <th>Source Name</th>
-                <th>Time Generated</th>
-                <th>String Inserts</th>
-            </tr>
-            {% for item in data %}
-            <tr>
-                <td>{{ item.event_id }}</td>
-                <td>{{ item.event_type }}</td>
-                <td>{{ item.event_time }}</td>
-                <td>{{ item.event_info }}</td>
-            </tr>
-            {% endfor %}
-            {% endif %}
-            {% if selected_table == 'warning' %}
-            <tr>
-                <th>Event ID</th>
-                <th>Source Name</th>
-                <th>Time Generated</th>
-                <th>String Inserts</th>
-            </tr>
-            {% for item in data %}
-            <tr>
-                <td>{{ item.event_id }}</td>
-                <td>{{ item.event_type }}</td>
-                <td>{{ item.event_time }}</td>
-                <td>{{ item.event_info }}</td>
-            </tr>
-            {% endfor %}
-            {% endif %}
-        </table>
-    </div>
+           
+        {% endfor %}
+   </div>
+   {% endif %}
 {% endblock %}
